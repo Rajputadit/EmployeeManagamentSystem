@@ -4,7 +4,8 @@ import CompleteTask from './CompleteTask'
 import Failed from './Failed'
 import NewTask from './NewTask'
 import { AuthContext } from '../../context/AuthContext'
-import { getActivityLabel, getTaskCounts, getTaskStatus, setTaskStatus } from '../../utils/tasks'
+import { getTaskCounts, getTaskStatus } from '../../utils/tasks'
+import { api } from '../../utils/api'
 
 const categories = [
   { id: 'new', label: 'Pending acceptance' },
@@ -15,10 +16,11 @@ const categories = [
 ]
 
 const TaskList = ({ data }) => {
-  const [employees, setEmployees] = useContext(AuthContext)
+  const { refreshEmployees } = useContext(AuthContext)
   const [category, setCategory] = useState('new')
   const [titleFilter, setTitleFilter] = useState('')
   const [dateFilter, setDateFilter] = useState('')
+  const [updateError, setUpdateError] = useState('')
 
   const taskCounts = getTaskCounts(data.tasks)
   const filteredTasks = useMemo(() => data.tasks.filter((task) => {
@@ -45,29 +47,14 @@ const TaskList = ({ data }) => {
     dateFilter
   ])
 
-  const updateTask = (taskId, status) => {
-    const updatedEmployees = employees.map((employee) => {
-      if (employee.id !== data.id) return employee
-
-      const tasks = employee.tasks.map((task) => {
-        if (task.id !== taskId || getTaskStatus(task) !== (status === 'inProgress' || status === 'rejected' ? 'new' : 'inProgress')) {
-          return task
-        }
-
-        return {
-          ...setTaskStatus(task, status),
-          activity: [
-            ...(task.activity ?? []),
-            { action: getActivityLabel(status), at: new Date().toISOString() }
-          ]
-        }
-      })
-
-      return { ...employee, tasks, taskCounts: getTaskCounts(tasks) }
-    })
-
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees))
-    setEmployees(updatedEmployees)
+  const updateTask = async (taskId, status) => {
+    setUpdateError('')
+    try {
+      await api.patch(`/tasks/${taskId}/status`, { status })
+      await refreshEmployees()
+    } catch (error) {
+      setUpdateError(error.message)
+    }
   }
 
   const visibleTasks = filteredTasks.filter((task) => getTaskStatus(task) === category)
@@ -97,6 +84,7 @@ const TaskList = ({ data }) => {
           type="date"
         />
       </div>
+      {updateError && <p role="alert" className="mb-4 text-sm text-red-400">{updateError}</p>}
 
       <div className="mb-5 flex gap-2 overflow-x-auto pb-2">
         {categories.map((item) => (

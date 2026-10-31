@@ -1,66 +1,42 @@
 
 import { useState, useContext } from 'react'
 import { AuthContext } from '../../context/AuthContext'
-import { getActivityLabel, getTaskCounts, setTaskStatus } from '../../utils/tasks'
+import { api } from '../../utils/api'
 
 const CreateTask = () => {
-
-  const [userData, setUserData] = useContext(AuthContext)
+  const { employees, refreshEmployees } = useContext(AuthContext)
 
   const [taskTitle, setTaskTitle] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
   const [taskDate, setTaskDate] = useState('')
   const [asgnTo, setAsignTo] = useState('')
   const [category, setCategory] = useState('')
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault()
-
-    const assignedEmployee = userData.find(
-      (elem) => elem.firstName.toLowerCase() === asgnTo.trim().toLowerCase()
-    )
-
-    if (!assignedEmployee) {
-      alert('Employee not found!')
-      return
+    setSaving(true)
+    setError('')
+    try {
+      await api.post('/tasks', {
+        employeeId: asgnTo,
+        taskTitle,
+        taskDescription,
+        taskDate,
+        category
+      })
+      await refreshEmployees()
+      setAsignTo('')
+      setCategory('')
+      setTaskDate('')
+      setTaskDescription('')
+      setTaskTitle('')
+    } catch (requestError) {
+      setError(requestError.message)
+    } finally {
+      setSaving(false)
     }
-
-    const newTask = {
-      id: crypto.randomUUID(),
-      taskTitle,
-      taskDescription,
-      taskDate,
-      category,
-      activity: [{
-        action: getActivityLabel('new'),
-        at: new Date().toISOString()
-      }],
-      ...setTaskStatus({}, 'new')
-    }
-
-    const updatedEmployees = userData.map((elem) => {
-      if (elem.id === assignedEmployee.id) {
-        const tasks = [...elem.tasks, newTask]
-        return {
-          ...elem,
-          tasks,
-          taskCounts: getTaskCounts(tasks)
-        }
-      }
-
-      return elem
-    })
-
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees))
-    setUserData(updatedEmployees)
-
-    alert('Task created successfully!')
-
-    setAsignTo('')
-    setCategory('')
-    setTaskDate('')
-    setTaskDescription('')
-    setTaskTitle('')
   }
 
   return (
@@ -94,14 +70,17 @@ const CreateTask = () => {
 
           <div>
             <h3 className="text-sm text-gray-300 mb-0.5">Assign to</h3>
-            <input
+            <select
               value={asgnTo}
               onChange={(e) => setAsignTo(e.target.value)}
-              className="text-sm py-1 px-2 w-full rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4 text-white"
-              type="text"
-              placeholder="Employee name"
+              className="text-sm py-1 px-2 w-full rounded outline-none bg-[#111] border-[1px] border-gray-400 mb-4 text-white"
               required
-            />
+            >
+              <option value="">Select an employee</option>
+              {employees.map((employee) => (
+                <option key={employee.id} value={employee.id}>{employee.firstName} — {employee.email}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -129,11 +108,13 @@ const CreateTask = () => {
             required
           />
 
+          {error && <p role="alert" className="mb-3 text-sm text-red-400">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-emerald-500 hover:bg-emerald-600 text-sm py-2 px-4 rounded text-white"
+            disabled={saving || employees.length === 0}
+            className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 text-sm py-2 px-4 rounded text-white"
           >
-            Create Task
+            {saving ? 'Creating...' : 'Create Task'}
           </button>
 
         </div>

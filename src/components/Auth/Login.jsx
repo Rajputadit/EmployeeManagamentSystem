@@ -1,28 +1,32 @@
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-const Login = ({ handleLogin }) => {
+const Login = ({ handleLogin, showRegister, error }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const submitHandler = (e) => {
     e.preventDefault();
-    handleLogin(email, password)
+    handleLogin({ email, password })
     setEmail('')
     setPassword('')
   }
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center">
-      <div className="border-2 rounded-xl border-green-600 p-20">
-        <form onSubmit={submitHandler} className="flex flex-col items-center justify-center gap-4">
+    <main className="flex min-h-screen items-center justify-center px-4 py-10">
+      <section className="w-full max-w-md rounded-2xl border border-emerald-700 bg-[#1c1c1c] p-6 shadow-xl sm:p-10">
+        <h1 className="text-3xl font-semibold">Welcome back</h1>
+        <p className="mt-2 text-sm text-gray-400">Log in to continue to your dashboard.</p>
+        {error && <p role="alert" className="mt-4 rounded-lg bg-red-950 px-4 py-3 text-sm text-red-200">{error}</p>}
+        <form onSubmit={submitHandler} className="mt-8 flex flex-col gap-4">
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             type="email"
             placeholder="Enter the Email"
-            className="text-black outline-none bg-transparent border-2 border-emerald-600 text-xl py-3 px-5 rounded-full placeholder:text-gray-400"
+            autoComplete="email"
+            className="rounded-lg border border-gray-600 bg-[#111] px-4 py-3 text-white outline-none placeholder:text-gray-400 focus:border-emerald-500"
           />
 
           <input
@@ -31,18 +35,26 @@ const Login = ({ handleLogin }) => {
             required
             type="password"
             placeholder="Enter the password"
-            className="text-black outline-none bg-transparent border-2 border-emerald-600 text-xl py-3 px-5 rounded-full placeholder:text-gray-400"
+            autoComplete="current-password"
+            className="rounded-lg border border-gray-600 bg-[#111] px-4 py-3 text-white outline-none placeholder:text-gray-400 focus:border-emerald-500"
           />
 
           <button
             type="submit"
-            className="mt-5 text-white bg-emerald-600 text-xl py-3 px-5 rounded-full"
+            className="mt-2 rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-700"
           >
-            Submit
+            Log in
           </button>
         </form>
-      </div>
-    </div>
+
+        <p className="mt-6 text-center text-sm text-gray-400">
+          New here?{' '}
+          <button onClick={showRegister} className="font-semibold text-emerald-400 hover:text-emerald-300">
+            Create an account
+          </button>
+        </p>
+      </section>
+    </main>
   )
 }
 

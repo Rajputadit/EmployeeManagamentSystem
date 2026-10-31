@@ -1,35 +1,19 @@
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { AuthContext } from './AuthContext'
-import { getLocalStorage, setLocalStorage } from '../utils/localStorage'
-import { getTaskCounts, getTaskStatus, setTaskStatus } from '../utils/tasks'
+import { api } from '../utils/api'
 
 const AuthProvider = ({ children }) => {
-
-  const [userData, setUserData] = useState(() => {
-    setLocalStorage()
-    const { employees } = getLocalStorage()
-    const normalizedEmployees = employees.map((employee) => {
-      const tasks = employee.tasks.map((task, index) => ({
-        ...setTaskStatus(task, getTaskStatus(task)),
-        id: task.id ?? `${employee.id}-${index}`,
-        activity: Array.isArray(task.activity) ? task.activity : []
-      }))
-
-      return {
-        ...employee,
-        tasks,
-        taskCounts: getTaskCounts(tasks)
-      }
-    })
-
-    localStorage.setItem('employees', JSON.stringify(normalizedEmployees))
-    return normalizedEmployees
-  })
+  const [employees, setEmployees] = useState([])
+  const refreshEmployees = useCallback(async () => {
+    const records = await api.get('/employees')
+    setEmployees(records)
+    return records
+  }, [])
 
   return (
     <div>
-      <AuthContext.Provider value={[userData,setUserData]}>
+      <AuthContext.Provider value={{ employees, setEmployees, refreshEmployees }}>
         {children}
       </AuthContext.Provider>
     </div>

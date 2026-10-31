@@ -17,10 +17,10 @@ const statusStyles = {
 }
 
 const AllTask = () => {
-  const [userData] = useContext(AuthContext)
-  const assignedTasks = userData?.flatMap((employee) =>
+  const { employees } = useContext(AuthContext)
+  const assignedTasks = employees.flatMap((employee) =>
     employee.tasks.map((task) => ({ ...task, employeeName: employee.firstName }))
-  ) ?? []
+  )
 
   return (
     <section className="mt-8 space-y-5">
@@ -30,7 +30,7 @@ const AllTask = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {userData?.map((employee) => {
+        {employees.map((employee) => {
           const counts = getTaskCounts(employee.tasks)
           const progressTotal = counts.newTask + counts.active + counts.completed
           const progress = progressTotal ? Math.round((counts.completed / progressTotal) * 100) : 0

@@ -1,53 +1,94 @@
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Login from './components/Auth/Login'
+import Register from './components/Auth/Register'
 import EmployeeDashboard from './components/Dashboard/EmployeeDashboard'
 import AdminDashboard from './components/Dashboard/AdminDashboard'
 import { AuthContext } from './context/AuthContext'
+import { api } from './utils/api'
 
 const App = () => {
-  const [session, setSession] = useState(() => {
-    const loggedInUser = localStorage.getItem('loggedInUser')
-    return loggedInUser ? JSON.parse(loggedInUser) : null
-  })
-  const [userData] = useContext(AuthContext)
+  const [session, setSession] = useState(null)
+  const [showRegistration, setShowRegistration] = useState(false)
+  const [authLoading, setAuthLoading] = useState(() => Boolean(localStorage.getItem('authToken')))
+  const [authError, setAuthError] = useState('')
+  const { employees, setEmployees, refreshEmployees } = useContext(AuthContext)
   const user = session?.role
-  const loggedInUserData = userData?.find(
+  const loggedInUserData = employees.find(
     (employee) => employee.id === session?.data?.id
   ) ?? session?.data
 
-  const handleLogin = (email, password) => {
-    if (email === 'admin@me.com' && password === '123') {
-      const adminSession = { role: 'admin' }
-      setSession(adminSession)
-      localStorage.setItem('loggedInUser', JSON.stringify(adminSession))
-    } else if (userData) {
-      const employee = userData.find(
-        (e) => email === e.email && password === e.password
-      )
+  useEffect(() => {
+    if (!localStorage.getItem('authToken')) return
 
-      if (employee) {
-        const employeeSession = { role: 'employee', data: employee }
-        setSession(employeeSession)
-        localStorage.setItem('loggedInUser', JSON.stringify(employeeSession))
-      } else {
-        alert('Invalid Credentials')
+    const restoreSession = async () => {
+      try {
+        const currentUser = await api.get('/auth/me')
+        await refreshEmployees()
+        setSession({ role: currentUser.role, data: currentUser })
+      } catch (error) {
+        localStorage.removeItem('authToken')
+        setAuthError(error.message)
+      } finally {
+        setAuthLoading(false)
       }
-    } else {
-      alert('Employee data not available')
+    }
+
+    restoreSession()
+  }, [refreshEmployees])
+
+  const saveSession = async (result) => {
+    localStorage.setItem('authToken', result.token)
+    await refreshEmployees()
+    setSession({ role: result.user.role, data: result.user })
+    setAuthError('')
+  }
+
+  const handleLogin = async (credentials) => {
+    try {
+      await saveSession(await api.post('/auth/login', credentials))
+    } catch (error) {
+      localStorage.removeItem('authToken')
+      setAuthError(error.message)
     }
   }
 
-  // Logout function
+  const handleRegister = async (account) => {
+    try {
+      await saveSession(await api.post('/auth/register', account))
+      setShowRegistration(false)
+    } catch (error) {
+      localStorage.removeItem('authToken')
+      setAuthError(error.message)
+    }
+  }
+
   const handleLogout = () => {
-    localStorage.removeItem('loggedInUser')
+    localStorage.removeItem('authToken')
+    setEmployees([])
     setSession(null)
+  }
+
+  if (authLoading) {
+    return <main className="flex min-h-screen items-center justify-center text-gray-300">Connecting to your account...</main>
   }
 
   return (
     <>
       {!user ? (
-        <Login handleLogin={handleLogin} />
+        showRegistration ? (
+          <Register
+            handleRegister={handleRegister}
+            showLogin={() => setShowRegistration(false)}
+            error={authError}
+          />
+        ) : (
+          <Login
+            handleLogin={handleLogin}
+            showRegister={() => setShowRegistration(true)}
+            error={authError}
+          />
+        )
       ) : user === 'admin' ? (
         <AdminDashboard changeUser={handleLogout} />
       ) : user === 'employee' ? (
