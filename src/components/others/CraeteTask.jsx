@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { AuthContext } from '../../context/AuthProvider'
 
 const CreateTask = () => {
@@ -15,7 +15,7 @@ const CreateTask = () => {
   const submitHandler = (e) => {
     e.preventDefault()
 
-    const assignedEmployee = userData.employees.find(
+    const assignedEmployee = userData.find(
       (elem) => elem.firstName.toLowerCase() === asgnTo.trim().toLowerCase()
     )
 
@@ -35,8 +35,8 @@ const CreateTask = () => {
       completed: false
     }
 
-    const updatedEmployees = userData.employees.map((elem) => {
-      if (elem.firstName.toLowerCase() === asgnTo.trim().toLowerCase()) {
+    const updatedEmployees = userData.map((elem) => {
+      if (elem.id === assignedEmployee.id) {
         return {
           ...elem,
           tasks: [...elem.tasks, newTask],
@@ -50,10 +50,8 @@ const CreateTask = () => {
       return elem
     })
 
-    setUserData({
-      ...userData,
-      employees: updatedEmployees
-    })
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees))
+    setUserData(updatedEmployees)
 
     alert('Task created successfully!')
 

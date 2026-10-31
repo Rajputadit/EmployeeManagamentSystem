@@ -1,48 +1,35 @@
 
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import Login from './components/Auth/Login'
 import EmployeeDashboard from './components/Dashboard/EmployeeDashboard'
 import AdminDashboard from './components/Dashboard/AdminDashboard'
 import { AuthContext } from './context/AuthProvider'
 
 const App = () => {
-  const [user, setUser] = useState(null)
-  const [loggedInUserData, setLoggedInUserData] = useState(null)
-  const [userData, setUserData] = useContext(AuthContext)
-
-  useEffect(() => {
+  const [session, setSession] = useState(() => {
     const loggedInUser = localStorage.getItem('loggedInUser')
-
-    if (loggedInUser) {
-      const parsedUser = JSON.parse(loggedInUser)
-      setUser(parsedUser.role)
-
-      if (parsedUser.role === 'employee') {
-        setLoggedInUserData(parsedUser.data)
-      }
-    }
-  }, [])
+    return loggedInUser ? JSON.parse(loggedInUser) : null
+  })
+  const [userData] = useContext(AuthContext)
+  const user = session?.role
+  const loggedInUserData = userData?.find(
+    (employee) => employee.id === session?.data?.id
+  ) ?? session?.data
 
   const handleLogin = (email, password) => {
     if (email === 'admin@me.com' && password === '123') {
-      setUser('admin')
-      localStorage.setItem(
-        'loggedInUser',
-        JSON.stringify({ role: 'admin' })
-      )
+      const adminSession = { role: 'admin' }
+      setSession(adminSession)
+      localStorage.setItem('loggedInUser', JSON.stringify(adminSession))
     } else if (userData) {
       const employee = userData.find(
         (e) => email === e.email && password === e.password
       )
 
       if (employee) {
-        setUser('employee')
-        setLoggedInUserData(employee)
-
-        localStorage.setItem(
-          'loggedInUser',
-          JSON.stringify({ role: 'employee', data: employee })
-        )
+        const employeeSession = { role: 'employee', data: employee }
+        setSession(employeeSession)
+        localStorage.setItem('loggedInUser', JSON.stringify(employeeSession))
       } else {
         alert('Invalid Credentials')
       }
@@ -54,8 +41,7 @@ const App = () => {
   // Logout function
   const handleLogout = () => {
     localStorage.removeItem('loggedInUser')
-    setUser(null)
-    setLoggedInUserData(null)
+    setSession(null)
   }
 
   return (
@@ -79,5 +65,3 @@ const App = () => {
 }
 
 export default App
-
-
