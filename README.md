@@ -27,3 +27,18 @@ of `ADMIN_PASSWORD` in `.env`.
 The browser communicates with the API through Vite's `/api` development
 proxy. Registration, login, employee task states, and admin assignments are
 stored in MongoDB. Passwords are hashed before storage.
+
+## Deploy on Netlify
+
+The Netlify build includes the Express API as a serverless function. Configure
+these environment variables in **Site configuration → Environment variables**
+before deploying:
+
+- `MONGO_URI`: MongoDB Atlas connection string; allow Netlify's outbound
+  connections in the Atlas network access settings.
+- `JWT_SECRET`: a private random value with at least 32 characters.
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD`: the admin account credentials.
+
+Then trigger a new deploy. The `/api/*` rewrite in `netlify.toml` sends API
+requests to the function, while the React app remains served from `dist`.
+Never put production credentials in `VITE_*` variables or commit them to Git.
