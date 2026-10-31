@@ -1,9 +1,7 @@
 
-import React from 'react'
-
 const CompleteTask = ({data}) => {
   return (
-    <div className="flex-shrink-0 h-full w-[300px] p-13 bg-green-400 rounded-xl flex flex-col">
+    <div className="min-h-64 p-5 bg-emerald-800 rounded-xl flex flex-col">
 
       <div className="flex justify-between items-center">
         <h3 className="bg-red-600 text-sm px-3 py-1 rounded text-white">{data.category}</h3>
@@ -29,4 +27,3 @@ const CompleteTask = ({data}) => {
 }
 
 export default CompleteTask
-

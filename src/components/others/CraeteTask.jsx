@@ -1,6 +1,7 @@
 
 import { useState, useContext } from 'react'
-import { AuthContext } from '../../context/AuthProvider'
+import { AuthContext } from '../../context/AuthContext'
+import { getActivityLabel, getTaskCounts, setTaskStatus } from '../../utils/tasks'
 
 const CreateTask = () => {
 
@@ -25,25 +26,25 @@ const CreateTask = () => {
     }
 
     const newTask = {
+      id: crypto.randomUUID(),
       taskTitle,
       taskDescription,
       taskDate,
       category,
-      active: false,
-      newTask: true,
-      failed: false,
-      completed: false
+      activity: [{
+        action: getActivityLabel('new'),
+        at: new Date().toISOString()
+      }],
+      ...setTaskStatus({}, 'new')
     }
 
     const updatedEmployees = userData.map((elem) => {
       if (elem.id === assignedEmployee.id) {
+        const tasks = [...elem.tasks, newTask]
         return {
           ...elem,
-          tasks: [...elem.tasks, newTask],
-          taskCounts: {
-            ...elem.taskCounts,
-            newTask: elem.taskCounts.newTask + 1
-          }
+          tasks,
+          taskCounts: getTaskCounts(tasks)
         }
       }
 

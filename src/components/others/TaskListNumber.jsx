@@ -1,6 +1,4 @@
 
-import React from 'react'
-
 const TaskListNumber = ({ data }) => {
 
 
@@ -9,7 +7,7 @@ const TaskListNumber = ({ data }) => {
 
       <div className='rounded-xl py-6 px-6 bg-red-500'>
         <h2 className='text-3xl font-semibold'>{data.taskCounts.newTask}</h2>
-        <h3 className='text-xl font-medium'>New Task</h3>
+        <h3 className='text-xl font-medium'>Pending acceptance</h3>
       </div>
 
       <div className='rounded-xl py-6 px-6 bg-blue-500'>
@@ -19,12 +17,12 @@ const TaskListNumber = ({ data }) => {
 
       <div className='rounded-xl py-6 px-6 bg-yellow-500'>
         <h2 className='text-3xl font-semibold'>{data.taskCounts.active}</h2>
-        <h3 className='text-xl font-medium'>Active</h3>
+        <h3 className='text-xl font-medium'>In Progress</h3>
       </div>
 
       <div className='rounded-xl py-6 px-6 bg-orange-500'>
         <h2 className='text-3xl font-semibold'>{data.taskCounts.failed}</h2>
-        <h3 className='text-xl font-medium'>Failed</h3>
+        <h3 className='text-xl font-medium'>Rejected</h3>
       </div>
 
     </div>
@@ -32,4 +30,3 @@ const TaskListNumber = ({ data }) => {
 }
 
 export default TaskListNumber
-
