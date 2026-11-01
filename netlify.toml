@@ -1,7 +1,7 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+  command = "cd backend && npm ci && cd ../frontend && npm ci && npm run build"
+  publish = "frontend/dist"
+  functions = "backend/netlify/functions"
 
 [[redirects]]
   from = "/api/*"

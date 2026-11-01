@@ -1,4 +1,4 @@
-import { getTaskCounts, getTaskStatus, setTaskStatus } from '../../src/utils/tasks.js'
+import { getTaskCounts, getTaskStatus, setTaskStatus } from './tasks.js'
 
 export const serializeEmployee = (employee) => {
   const tasks = employee.tasks.map((task) => {

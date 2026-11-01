@@ -1,5 +1,5 @@
 import serverless from 'serverless-http'
-import app, { initializeDatabase } from '../../server/app.js'
+import app, { initializeDatabase } from '../../app.js'
 
 const expressHandler = serverless(app)
 let databaseReady

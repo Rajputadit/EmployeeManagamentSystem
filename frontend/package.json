@@ -1,27 +1,17 @@
 {
-  "name": "employeem",
+  "name": "employeem-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server": "node server/index.js",
-    "server:watch": "node --watch server/index.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.3.3",
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "dotenv": "^18.0.9",
-    "express": "^5.3.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.11.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "serverless-http": "^4.0.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
@@ -31,6 +21,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "@tailwindcss/vite": "^4.3.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^10.13.0",
     "eslint-plugin-react-hooks": "^7.1.1",
