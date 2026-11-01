@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const authenticate = (requiredRole) => (request, response, next) => {
+export const authenticate = (requiredRole) => (request, response, next) => {
   const authorization = request.get('authorization')
   const token = authorization?.startsWith('Bearer ')
     ? authorization.slice('Bearer '.length)
@@ -22,5 +22,3 @@ const authenticate = (requiredRole) => (request, response, next) => {
     return response.status(401).json({ message: 'Session expired. Please log in again.' })
   }
 }
-
-export default authenticate
