@@ -7,25 +7,24 @@
 2. Copy `.env.example` to `.env`. Set a private `JWT_SECRET` with at least
    32 characters and choose an `ADMIN_PASSWORD`.
 3. Install dependencies with `npm install`.
-4. In a terminal, start the API from the `server` folder:
+4. From the project root, start the API in one terminal:
 
    ```powershell
-   cd M:\EmployeeM\server
    npm run server
    ```
-
-   The API loads `.env` from the project root, even when started from this
-   folder.
 
 5. In another terminal, start the React app from the project root:
 
    ```powershell
-   cd M:\EmployeeM
    npm run dev
    ```
 
    Open the URL Vite prints in the terminal. If port 5173 is already in use,
    Vite will automatically choose another port, such as 5174.
+
+   Keep both terminals running during local development. `npm run dev` serves
+   the frontend and proxies `/api` requests to the API started by
+   `npm run server`.
 
 The API seeds the existing demo employees and their tasks only when the
 database has no employee accounts. Demo employee passwords are `123`.
@@ -39,8 +38,10 @@ are hashed before storage.
 
 ## Deploy on Netlify
 
-The Netlify build includes the Express API as a serverless function. Configure
-these environment variables in **Site configuration → Environment variables**
+Netlify does not run the local `npm run dev` or `npm run server` processes.
+It builds the frontend with `npm run build` and serves the Express API through
+the serverless function configured in `netlify.toml`. Configure these
+environment variables in **Site configuration → Environment variables**
 before deploying:
 
 - `MONGO_URI`: MongoDB Atlas connection string; allow Netlify's outbound
@@ -48,8 +49,9 @@ before deploying:
 - `JWT_SECRET`: a private random value with at least 32 characters.
 - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: the admin account credentials.
 
-Then trigger a new deploy. The `/api/*` rewrite in `netlify.toml` sends API
-requests to the function, while the React app remains served from `dist`.
-Netlify runs the API as a function, so `npm run server` and a local MongoDB
-server are not used in production; use MongoDB Atlas for the deployed app.
+Then trigger a new deploy. Netlify uses the build and publish settings in
+`netlify.toml`; the `/api/*` rewrite sends API requests to the function, while
+the React app is served from `dist`. The function connects to MongoDB Atlas;
+the local `npm run server` process and local MongoDB server are only for
+development.
 Never put production credentials in `VITE_*` variables or commit them to Git.
