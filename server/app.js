@@ -1,14 +1,17 @@
-import 'dotenv/config'
 import bcrypt from 'bcryptjs'
 import cors from 'cors'
+import dotenv from 'dotenv'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
+import { fileURLToPath } from 'node:url'
 import Employee from './models/Employee.js'
 import authenticate from './middleware/authenticate.js'
 import { serializeEmployee } from './utils/employee.js'
 import { employees as demoEmployees } from '../src/data/seedEmployees.js'
 import { getTaskStatus } from '../src/utils/tasks.js'
+
+dotenv.config({ path: fileURLToPath(new URL('../.env', import.meta.url)) })
 
 const app = express()
 

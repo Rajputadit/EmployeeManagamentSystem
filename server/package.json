@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "server": "node index.js",
+    "server:watch": "node --watch index.js"
+  }
+}

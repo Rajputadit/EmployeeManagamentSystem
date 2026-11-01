@@ -1,11 +1,12 @@
 
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import Login from './components/Auth/Login'
 import Register from './components/Auth/Register'
 import EmployeeDashboard from './components/Dashboard/EmployeeDashboard'
 import AdminDashboard from './components/Dashboard/AdminDashboard'
 import { AuthContext } from './context/AuthContext'
 import { api } from './utils/api'
+import useIdleTimeout from './utils/useIdleTimeout'
 
 const App = () => {
   const [session, setSession] = useState(null)
@@ -63,11 +64,13 @@ const App = () => {
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem('authToken')
     setEmployees([])
     setSession(null)
-  }
+  }, [setEmployees])
+
+  useIdleTimeout(handleLogout, 15 * 60 * 1000, Boolean(user))
 
   if (authLoading) {
     return <main className="flex min-h-screen items-center justify-center text-gray-300">Connecting to your account...</main>
