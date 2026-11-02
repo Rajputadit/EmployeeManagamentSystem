@@ -14,7 +14,18 @@ dotenv.config()
 
 const app = express()
 
-app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173' }))
+const clientOrigins = new Set([
+  'http://localhost:5173',
+  'https://glittery-hotteok-12fa25.netlify.app',
+  ...(process.env.CLIENT_ORIGIN ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+])
+
+app.use(cors({
+  origin: (origin, callback) => callback(null, !origin || clientOrigins.has(origin))
+}))
 app.use(express.json({ limit: '100kb' }))
 app.use((request, response, next) => {
   request.url = request.url

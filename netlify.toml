@@ -1,10 +1,6 @@
 [build]
-  command = "cd backend && npm ci && cd ../frontend && npm ci && npm run build"
+  command = "cd frontend && npm ci && npm run build"
   publish = "frontend/dist"
-  functions = "backend/netlify/functions"
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-  force = true
+[build.environment]
+  VITE_API_URL = "https://employeemanagamentsystem.onrender.com"
