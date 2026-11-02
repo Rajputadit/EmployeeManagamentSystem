@@ -62,3 +62,29 @@ Then trigger a new deploy. Netlify uses the build and publish settings in
 the React app is served from `frontend/dist`. The local backend process and
 MongoDB server are only for development.
 Never put production credentials in `VITE_*` variables or commit them to Git.
+
+## Deploy frontend and backend on Render
+
+The root `render.yaml` defines a Node web service for the API and a static site
+for the Vite frontend. In Render, create a **Blueprint** from this repository
+and apply the blueprint.
+
+After both services are created, configure these environment variables:
+
+**API web service**
+
+- `MONGO_URI`: MongoDB Atlas connection string.
+- `JWT_SECRET`: a private random value with at least 32 characters.
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD`: admin account credentials.
+- `CLIENT_ORIGIN`: the frontend service's exact origin, for example
+  `https://employee-management-frontend.onrender.com`.
+
+**Frontend static site**
+
+- `VITE_API_URL`: the API service's origin, for example
+  `https://employee-management-api.onrender.com`.
+
+Save the frontend environment variable and trigger a new deploy so Vite embeds
+the API origin in the production build. The `VITE_API_URL` setting is only a
+public API address; never put secrets in `VITE_*` variables. The frontend
+rewrite in `render.yaml` also serves the app for direct navigation to a route.

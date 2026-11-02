@@ -1,6 +1,8 @@
+const apiBaseUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '') ?? ''
+
 const request = async (path, options = {}) => {
   const token = localStorage.getItem('authToken')
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(`${apiBaseUrl}/api${path}`, {
     ...options,
     headers: {
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),
