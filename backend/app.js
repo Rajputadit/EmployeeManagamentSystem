@@ -17,6 +17,7 @@ const app = express()
 const clientOrigins = new Set([
   'http://localhost:5173',
   'https://glittery-hotteok-12fa25.netlify.app',
+  'https://employeemanagamentsystem-7.onrender.com',
   ...(process.env.CLIENT_ORIGIN ?? '')
     .split(',')
     .map((origin) => origin.trim())

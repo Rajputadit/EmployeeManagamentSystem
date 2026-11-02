@@ -76,15 +76,11 @@ After both services are created, configure these environment variables:
 - `MONGO_URI`: MongoDB Atlas connection string.
 - `JWT_SECRET`: a private random value with at least 32 characters.
 - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: admin account credentials.
-- `CLIENT_ORIGIN`: comma-separated allowed frontend origins, for example
-  `https://glittery-hotteok-12fa25.netlify.app`.
 
-**Netlify frontend**
+The Blueprint sets `CLIENT_ORIGIN` to the Render frontend URL and sets
+`VITE_API_URL` to the API service URL for the Render frontend. For the Netlify
+frontend, `netlify.toml` sets `VITE_API_URL` to the same API URL; its origin is
+also allowed by the API. Trigger fresh deploys after changing configuration.
 
-- `VITE_API_URL`: `https://employeemanagamentsystem.onrender.com`.
-
-The repository's `netlify.toml` sets `VITE_API_URL` and builds only the
-frontend. Trigger a new Netlify deploy after pushing the changes. The Render
-API allows the configured `CLIENT_ORIGIN` values and localhost for development.
-The `VITE_API_URL` setting is only a public API address; never put secrets in
-`VITE_*` variables.
+`VITE_API_URL` is only a public API address; never put secrets in `VITE_*`
+variables.
