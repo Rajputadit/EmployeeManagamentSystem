@@ -17,7 +17,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://employeemanagamentsystem.onrender.com
+        value: https://employeemanagamentsystem-8.onrender.com
     routes:
       - type: rewrite
         source: /*

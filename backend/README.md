@@ -78,9 +78,10 @@ After both services are created, configure these environment variables:
 - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: admin account credentials.
 
 The Blueprint sets `CLIENT_ORIGIN` to the Render frontend URL and sets
-`VITE_API_URL` to the API service URL for the Render frontend. For the Netlify
-frontend, `netlify.toml` sets `VITE_API_URL` to the same API URL; its origin is
-also allowed by the API. Trigger fresh deploys after changing configuration.
+`VITE_API_URL` to `https://employeemanagamentsystem-8.onrender.com` for the
+Render frontend. For the Netlify frontend, `netlify.toml` sets `VITE_API_URL`
+to the same API URL; its origin is also allowed by the API. Trigger fresh
+deploys after changing configuration.
 
 `VITE_API_URL` is only a public API address; never put secrets in `VITE_*`
 variables.

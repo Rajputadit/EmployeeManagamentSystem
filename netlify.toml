@@ -3,4 +3,4 @@
   publish = "frontend/dist"
 
 [build.environment]
-  VITE_API_URL = "https://employeemanagamentsystem.onrender.com"
+  VITE_API_URL = "https://employeemanagamentsystem-8.onrender.com"
